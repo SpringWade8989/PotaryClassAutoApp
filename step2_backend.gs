@@ -32,21 +32,28 @@ const CONFIG = {
 
   // 예약 DB 시트의 열 인덱스 (1-based)
   COL: {
-    ROW_ID:      1,   // A: 접수번호
-    SUBMITTED:   2,   // B: 접수일시
-    DATE:        3,   // C: 체험날짜
-    PROGRAM:     4,   // D: 프로그램
-    TIME:        5,   // E: 시간대
-    COUNT:       6,   // F: 인원수
-    NAME:        7,   // G: 신청자명
-    PHONE:       8,   // H: 연락처
-    EMAIL:       9,   // I: 이메일
-    MEMO:        10,  // J: 메모
-    STATUS:      11,  // K: 상태 (대기/확정/취소)
-    APPROVE_CB:  12,  // L: ✅ 승인 체크박스
-    CANCEL_CB:   13,  // M: ❌ 취소 체크박스
-    CALENDAR_ID: 14,  // N: 등록된 캘린더 이벤트 ID
-    ESTIMATE_URL:15,  // O: 견적서 URL
+    ROW_ID:        1,   // A: 접수번호
+    SUBMITTED:     2,   // B: 접수일시
+    DATE:          3,   // C: 체험날짜
+    PROGRAM:       4,   // D: 프로그램
+    TIME:          5,   // E: 시간대
+    VISIT_TYPE:    6,   // F: 방문유형(내방/출강)
+    REGION:        7,   // G: 출강지역
+    COUNT:         8,   // H: 인원수
+    PROGRAM_PRICE: 9,   // I: 단가(1인)
+    PROGRAM_TOTAL: 10,  // J: 체험비 합계
+    TRAVEL_FEE:    11,  // K: 출장비
+    LOGO_FEE:      12,  // L: 로고전사지 비용
+    ESTIMATE_TOTAL:13,  // M: 견적 합계
+    NAME:          14,  // N: 신청자명
+    PHONE:         15,  // O: 연락처
+    EMAIL:         16,  // P: 이메일
+    MEMO:          17,  // Q: 메모
+    STATUS:        18,  // R: 상태 (대기/확정/취소)
+    APPROVE_CB:    19,  // S: ✅ 승인 체크박스
+    CANCEL_CB:     20,  // T: ❌ 취소 체크박스
+    CALENDAR_ID:   21,  // U: 등록된 캘린더 이벤트 ID
+    ESTIMATE_URL:  22,  // V: 견적서 URL
   },
 };
 
@@ -132,16 +139,23 @@ function handleReserve(data) {
     data.date,                                       // C: 체험날짜
     data.program,                                    // D: 프로그램
     data.time,                                       // E: 시간대
-    Number(data.count),                              // F: 인원수
-    data.name,                                       // G: 신청자명
-    data.phone,                                      // H: 연락처
-    data.email,                                      // I: 이메일
-    data.memo || '',                                 // J: 메모
-    '대기',                                          // K: 상태
-    false,                                           // L: 승인 체크박스
-    false,                                           // M: 취소 체크박스
-    '',                                              // N: 캘린더 이벤트 ID
-    '',                                              // O: 견적서 URL
+    data.visitType || '',                            // F: 방문유형(내방/출강)
+    data.region || '',                               // G: 출강지역
+    Number(data.count),                              // H: 인원수
+    Number(data.programPrice) || 0,                 // I: 단가(1인)
+    Number(data.programTotal) || 0,                 // J: 체험비 합계
+    String(data.travelFee || 0),                    // K: 출장비
+    data.logoOption ? 100000 : 0,                   // L: 로고전사지 비용
+    String(data.estimateTotal || ''),               // M: 견적 합계
+    data.name,                                       // N: 신청자명
+    data.phone,                                      // O: 연락처
+    data.email,                                      // P: 이메일
+    data.memo || '',                                 // Q: 메모
+    '대기',                                          // R: 상태
+    false,                                           // S: 승인 체크박스
+    false,                                           // T: 취소 체크박스
+    '',                                              // U: 캘린더 이벤트 ID
+    '',                                              // V: 견적서 URL
   ]);
 
   // ③ 승인 체크박스 열에 체크박스 UI 적용 (appendRow 직후 마지막 행)
@@ -287,15 +301,22 @@ function handleCancellation(sheet, row) {
 function extractReservationInfo(rowData) {
   const C = CONFIG.COL;
   return {
-    rowId:    rowData[C.ROW_ID - 1],
-    date:     formatDate(rowData[C.DATE - 1]),
-    program:  rowData[C.PROGRAM - 1],
-    time:     rowData[C.TIME - 1],
-    count:    rowData[C.COUNT - 1],
-    name:     rowData[C.NAME - 1],
-    phone:    rowData[C.PHONE - 1],
-    email:    rowData[C.EMAIL - 1],
-    memo:     rowData[C.MEMO - 1],
+    rowId:         rowData[C.ROW_ID - 1],
+    date:          formatDate(rowData[C.DATE - 1]),
+    program:       rowData[C.PROGRAM - 1],
+    time:          rowData[C.TIME - 1],
+    visitType:     rowData[C.VISIT_TYPE - 1],
+    region:        rowData[C.REGION - 1],
+    count:         rowData[C.COUNT - 1],
+    programPrice:  rowData[C.PROGRAM_PRICE - 1],
+    programTotal:  rowData[C.PROGRAM_TOTAL - 1],
+    travelFee:     rowData[C.TRAVEL_FEE - 1],
+    logoFee:       rowData[C.LOGO_FEE - 1],
+    estimateTotal: rowData[C.ESTIMATE_TOTAL - 1],
+    name:          rowData[C.NAME - 1],
+    phone:         rowData[C.PHONE - 1],
+    email:         rowData[C.EMAIL - 1],
+    memo:          rowData[C.MEMO - 1],
   };
 }
 
@@ -452,7 +473,9 @@ function setupSheet() {
 
   const headers = [
     '접수번호', '접수일시', '체험날짜', '프로그램', '시간대',
-    '인원수', '신청자명', '연락처', '이메일', '메모',
+    '방문유형', '출강지역', '인원수', '단가(1인)', '체험비합계',
+    '출장비', '로고전사지비용', '견적합계',
+    '신청자명', '연락처', '이메일', '메모',
     '상태', '승인', '취소', '캘린더이벤트ID', '견적서URL',
   ];
 

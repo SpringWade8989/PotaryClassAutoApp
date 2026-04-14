@@ -26,9 +26,7 @@
       background: #92400e !important;
       border-color: #92400e !important;
     }
-    .flatpickr-day:hover {
-      background: #fef3c7 !important;
-    }
+    .flatpickr-day:hover { background: #fef3c7 !important; }
     .flatpickr-months .flatpickr-month {
       background: #92400e;
       color: #fff;
@@ -47,260 +45,286 @@
       cursor: not-allowed;
     }
 
-    /* ── 페이지 기본 ── */
     body { background: #fffbf5; }
 
-    /* ── 프로그램 카드 ── */
-    .program-btn {
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .program-btn.active {
+    /* ── 선택 버튼 공통 ── */
+    .sel-btn { transition: all 0.2s; cursor: pointer; }
+    .sel-btn.active {
       background: #92400e !important;
       color: #fff !important;
       border-color: #92400e !important;
     }
-
-    /* ── 시간 버튼 ── */
-    .time-btn {
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .time-btn.active {
-      background: #92400e !important;
-      color: #fff !important;
-      border-color: #92400e !important;
-    }
-    .time-btn:disabled {
+    .sel-btn:disabled {
       opacity: 0.4;
       cursor: not-allowed;
       background: #f3f4f6 !important;
       color: #9ca3af !important;
     }
 
-    /* ── 스텝 인디케이터 ── */
-    .step-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: #d1d5db;
-      transition: background 0.3s;
-    }
+    /* ── 스텝 도트 ── */
+    .step-dot { width:10px; height:10px; border-radius:50%; background:#d1d5db; transition:background 0.3s; }
     .step-dot.done { background: #92400e; }
 
-    /* ── 입력 공통 ── */
-    input[type="text"], input[type="tel"], input[type="email"] {
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
+    /* ── 입력 포커스 ── */
     input[type="text"]:focus,
     input[type="tel"]:focus,
-    input[type="email"]:focus {
+    input[type="email"]:focus,
+    select:focus {
       outline: none;
       border-color: #92400e;
       box-shadow: 0 0 0 3px rgba(146,64,14,0.15);
     }
 
+    /* ── 로고 옵션 체크박스 영역 ── */
+    .logo-option-box { transition: all 0.3s; }
+
     /* ── 스피너 ── */
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner {
-      width: 20px; height: 20px;
+      width:20px; height:20px;
       border: 2px solid rgba(255,255,255,0.4);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       display: inline-block;
     }
+
+    /* ── 금액 합계 강조 ── */
+    .total-row { border-top: 2px solid #92400e; margin-top: 8px; padding-top: 8px; }
   </style>
 </head>
 <body class="min-h-screen py-8 px-4">
 
-  <div class="max-w-lg mx-auto">
+<div class="max-w-lg mx-auto">
 
-    <!-- 헤더 -->
-    <div class="text-center mb-8">
-      <p class="text-sm tracking-widest text-amber-800 uppercase font-semibold mb-1">Pottery Experience</p>
-      <h1 class="text-3xl font-bold text-stone-800">도예 체험 예약</h1>
-      <p class="text-stone-500 mt-2 text-sm">원하시는 날짜와 프로그램을 선택해 주세요</p>
-    </div>
+  <!-- 헤더 -->
+  <div class="text-center mb-8">
+    <p class="text-sm tracking-widest text-amber-800 uppercase font-semibold mb-1">Pottery Experience</p>
+    <h1 class="text-3xl font-bold text-stone-800">도예 체험 예약</h1>
+    <p class="text-stone-500 mt-2 text-sm">원하시는 날짜와 프로그램을 선택해 주세요</p>
+  </div>
 
-    <!-- 스텝 인디케이터 -->
-    <div class="flex items-center justify-center gap-2 mb-8">
-      <div class="step-dot done" id="dot1"></div>
-      <div class="h-px w-8 bg-stone-300"></div>
-      <div class="step-dot" id="dot2"></div>
-      <div class="h-px w-8 bg-stone-300"></div>
-      <div class="step-dot" id="dot3"></div>
-      <div class="h-px w-8 bg-stone-300"></div>
-      <div class="step-dot" id="dot4"></div>
-    </div>
+  <!-- 스텝 인디케이터 -->
+  <div class="flex items-center justify-center gap-2 mb-8">
+    <div class="step-dot done" id="dot1"></div>
+    <div class="h-px w-6 bg-stone-300"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="h-px w-6 bg-stone-300"></div>
+    <div class="step-dot" id="dot3"></div>
+    <div class="h-px w-6 bg-stone-300"></div>
+    <div class="step-dot" id="dot4"></div>
+    <div class="h-px w-6 bg-stone-300"></div>
+    <div class="step-dot" id="dot5"></div>
+  </div>
 
-    <!-- ────────────────────────────────────
-         STEP 1: 날짜 · 프로그램 · 시간
-    ──────────────────────────────────── -->
-    <div id="step1" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4">
+  <!-- ────────────────────────────────────
+       STEP 1: 날짜 · 프로그램 · 시간
+  ──────────────────────────────────── -->
+  <div id="step1" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4">
 
-      <!-- 날짜 선택 -->
-      <div class="mb-6">
-        <label class="block text-sm font-semibold text-stone-700 mb-2">
-          <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">1</span>
-          날짜 선택
-        </label>
-        <input id="datePicker"
-               type="text"
-               readonly
-               placeholder="날짜를 선택해 주세요"
-               class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-700 text-sm cursor-pointer bg-stone-50 hover:bg-amber-50 transition" />
-      </div>
-
-      <!-- 프로그램 선택 -->
-      <div class="mb-6">
-        <label class="block text-sm font-semibold text-stone-700 mb-3">
-          <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">2</span>
-          체험 프로그램 선택
-        </label>
-        <div class="grid grid-cols-2 gap-2" id="programGrid">
-          <!-- JS로 렌더링 -->
-        </div>
-      </div>
-
-      <!-- 시간 선택 -->
-      <div>
-        <label class="block text-sm font-semibold text-stone-700 mb-3">
-          <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">3</span>
-          시간 선택
-        </label>
-        <div class="grid grid-cols-2 gap-3">
-          <button id="btnAM"
-                  class="time-btn border-2 border-stone-200 rounded-xl py-3 px-4 text-center"
-                  onclick="selectTime('오전')">
-            <p class="font-semibold text-stone-700 text-sm">오전</p>
-            <p class="text-xs text-stone-400 mt-0.5">10:00 ~ 12:00</p>
-          </button>
-          <button id="btnPM"
-                  class="time-btn border-2 border-stone-200 rounded-xl py-3 px-4 text-center"
-                  onclick="selectTime('오후')">
-            <p class="font-semibold text-stone-700 text-sm">오후</p>
-            <p class="text-xs text-stone-400 mt-0.5">14:00 ~ 16:00</p>
-          </button>
-        </div>
-        <p id="timeNotice" class="text-xs text-stone-400 mt-2 hidden">
-          ※ 회색 처리된 시간대는 이미 예약이 마감되었습니다.
-        </p>
-      </div>
-    </div>
-
-    <!-- ────────────────────────────────────
-         STEP 2: 인원수
-    ──────────────────────────────────── -->
-    <div id="step2" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all" >
-
-      <label class="block text-sm font-semibold text-stone-700 mb-4">
-        <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">4</span>
-        참가 인원
+    <!-- 날짜 선택 -->
+    <div class="mb-6">
+      <label class="block text-sm font-semibold text-stone-700 mb-2">
+        <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">1</span>
+        날짜 선택
       </label>
-
-      <div class="flex items-center justify-center gap-6">
-        <button onclick="changeCount(-1)"
-                class="w-11 h-11 rounded-full border-2 border-stone-200 text-stone-500 text-xl font-bold hover:border-amber-800 hover:text-amber-800 transition flex items-center justify-center">
-          −
-        </button>
-        <div class="text-center">
-          <span id="countDisplay" class="text-4xl font-bold text-stone-800">4</span>
-          <span class="text-stone-500 text-sm ml-1">명</span>
-        </div>
-        <button onclick="changeCount(1)"
-                class="w-11 h-11 rounded-full border-2 border-stone-200 text-stone-500 text-xl font-bold hover:border-amber-800 hover:text-amber-800 transition flex items-center justify-center">
-          +
-        </button>
-      </div>
-      <p class="text-center text-xs text-stone-400 mt-3">최소 4명 · 최대 30명</p>
+      <input id="datePicker" type="text" readonly placeholder="날짜를 선택해 주세요"
+             class="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-700 text-sm cursor-pointer bg-stone-50 hover:bg-amber-50 transition" />
     </div>
 
-    <!-- ────────────────────────────────────
-         STEP 3: 신청자 정보
-    ──────────────────────────────────── -->
-    <div id="step3" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all">
-
-      <label class="block text-sm font-semibold text-stone-700 mb-4">
-        <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">5</span>
-        신청자 정보
+    <!-- 프로그램 선택 -->
+    <div class="mb-6">
+      <label class="block text-sm font-semibold text-stone-700 mb-3">
+        <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">2</span>
+        체험 프로그램 선택
       </label>
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs text-stone-500 mb-1">이름 <span class="text-red-400">*</span></label>
-          <input id="inputName" type="text" placeholder="홍길동"
-                 class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700" />
-        </div>
-        <div>
-          <label class="block text-xs text-stone-500 mb-1">연락처 <span class="text-red-400">*</span></label>
-          <input id="inputPhone" type="tel" placeholder="010-0000-0000"
-                 class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700"
-                 oninput="formatPhone(this)" />
-        </div>
-        <div>
-          <label class="block text-xs text-stone-500 mb-1">이메일 <span class="text-red-400">*</span></label>
-          <input id="inputEmail" type="email" placeholder="example@email.com"
-                 class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700" />
-        </div>
-        <div>
-          <label class="block text-xs text-stone-500 mb-1">메모 (선택)</label>
-          <input id="inputMemo" type="text" placeholder="요청사항이 있으면 입력해 주세요"
-                 class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ────────────────────────────────────
-         STEP 4: 예약 요약 & 제출
-    ──────────────────────────────────── -->
-    <div id="step4" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all">
-
-      <label class="block text-sm font-semibold text-stone-700 mb-4">
-        <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">6</span>
-        예약 내용 확인
-      </label>
-
-      <div id="summaryBox" class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-stone-700 space-y-2 mb-5">
+      <div class="grid grid-cols-1 gap-2" id="programGrid">
         <!-- JS로 렌더링 -->
       </div>
+    </div>
 
-      <p class="text-xs text-stone-400 mb-4 leading-relaxed">
-        예약 접수 후 담당자 확인을 통해 <strong>예약이 확정</strong>됩니다.<br />
-        확정 시 이메일로 안내를 드립니다.
+    <!-- 시간 선택 -->
+    <div>
+      <label class="block text-sm font-semibold text-stone-700 mb-3">
+        <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">3</span>
+        시간 선택
+      </label>
+      <div class="grid grid-cols-2 gap-3">
+        <button id="btnAM" class="sel-btn border-2 border-stone-200 rounded-xl py-3 px-4 text-center" onclick="selectTime('오전')">
+          <p class="font-semibold text-stone-700 text-sm">오전</p>
+          <p class="text-xs text-stone-400 mt-0.5">10:00 ~ 12:00</p>
+        </button>
+        <button id="btnPM" class="sel-btn border-2 border-stone-200 rounded-xl py-3 px-4 text-center" onclick="selectTime('오후')">
+          <p class="font-semibold text-stone-700 text-sm">오후</p>
+          <p class="text-xs text-stone-400 mt-0.5">14:00 ~ 16:00</p>
+        </button>
+      </div>
+      <p id="timeNotice" class="text-xs text-stone-400 mt-2 hidden">
+        ※ 회색 처리된 시간대는 이미 예약이 마감되었습니다.
       </p>
-
-      <button id="submitBtn"
-              onclick="submitReservation()"
-              class="w-full bg-amber-800 hover:bg-amber-900 text-white font-semibold py-4 rounded-xl transition text-base flex items-center justify-center gap-2">
-        예약 접수하기
-      </button>
-    </div>
-
-  </div><!-- /max-w-lg -->
-
-  <!-- ────────────────────────────────────
-       완료 팝업 (오버레이)
-  ──────────────────────────────────── -->
-  <div id="successOverlay"
-       class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden px-4">
-    <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
-      <div class="text-5xl mb-4">🎉</div>
-      <h2 class="text-xl font-bold text-stone-800 mb-2">예약이 접수되었습니다!</h2>
-      <p class="text-sm text-stone-500 mb-1">담당자 확인 후 예약이 확정됩니다.</p>
-      <p class="text-sm text-stone-500 mb-6">확정 시 이메일로 안내드리겠습니다. 😊</p>
-      <button onclick="resetForm()"
-              class="w-full bg-amber-800 text-white font-semibold py-3 rounded-xl hover:bg-amber-900 transition">
-        처음으로 돌아가기
-      </button>
     </div>
   </div>
 
   <!-- ────────────────────────────────────
-       에러 토스트
+       STEP 2: 내방 / 출강
   ──────────────────────────────────── -->
-  <div id="toast"
-       class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white text-sm px-5 py-3 rounded-xl shadow-lg hidden z-50 max-w-xs text-center">
+  <div id="stepVisit" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all">
+
+    <label class="block text-sm font-semibold text-stone-700 mb-3">
+      <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">4</span>
+      방문 유형
+    </label>
+
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <button id="btnVisitIn" class="sel-btn border-2 border-stone-200 rounded-xl py-3 px-4 text-center" onclick="selectVisitType('내방')">
+        <p class="text-lg mb-0.5">🏛️</p>
+        <p class="font-semibold text-stone-700 text-sm">내방</p>
+        <p class="text-xs text-stone-400 mt-0.5">공방 직접 방문</p>
+      </button>
+      <button id="btnVisitOut" class="sel-btn border-2 border-stone-200 rounded-xl py-3 px-4 text-center" onclick="selectVisitType('출강')">
+        <p class="text-lg mb-0.5">🚐</p>
+        <p class="font-semibold text-stone-700 text-sm">출강</p>
+        <p class="text-xs text-stone-400 mt-0.5">강사 직접 방문</p>
+      </button>
+    </div>
+
+    <!-- 출강 지역 선택 (출강 선택 시에만 표시) -->
+    <div id="regionBox" class="hidden">
+      <label class="block text-xs text-stone-500 mb-2">출강 지역 선택 <span class="text-red-400">*</span></label>
+      <select id="regionSelect"
+              onchange="selectRegion(this.value)"
+              class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700 bg-white transition">
+        <option value="">-- 지역을 선택해 주세요 --</option>
+        <option value="서울 및 경기 서북부">서울 및 경기 서북부 — 출장비 100,000원</option>
+        <option value="경기도 (서북부 제외)">경기도 (서북부 제외) — 출장비 200,000원</option>
+        <option value="충청·강원">충청 · 강원 — 출장비 300,000원</option>
+        <option value="전라·경상">전라 · 경상 — 출장비 실비 (별도 문의)</option>
+      </select>
+      <p id="travelFeeNote" class="text-xs text-amber-700 mt-2 hidden font-medium"></p>
+    </div>
   </div>
+
+  <!-- ────────────────────────────────────
+       STEP 3: 인원수 + 로고 옵션
+  ──────────────────────────────────── -->
+  <div id="step2" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all">
+
+    <label class="block text-sm font-semibold text-stone-700 mb-4">
+      <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">5</span>
+      참가 인원
+    </label>
+
+    <div class="flex items-center justify-center gap-6 mb-1">
+      <button onclick="changeCount(-1)"
+              class="w-11 h-11 rounded-full border-2 border-stone-200 text-stone-500 text-xl font-bold hover:border-amber-800 hover:text-amber-800 transition flex items-center justify-center">
+        −
+      </button>
+      <div class="text-center">
+        <span id="countDisplay" class="text-4xl font-bold text-stone-800">4</span>
+        <span class="text-stone-500 text-sm ml-1">명</span>
+      </div>
+      <button onclick="changeCount(1)"
+              class="w-11 h-11 rounded-full border-2 border-stone-200 text-stone-500 text-xl font-bold hover:border-amber-800 hover:text-amber-800 transition flex items-center justify-center">
+        +
+      </button>
+    </div>
+    <p class="text-center text-xs text-stone-400 mb-5">최소 4명 · 최대 30명</p>
+
+    <!-- ESG 프로그램 선택 시만 표시되는 로고 옵션 -->
+    <div id="logoOptionBox" class="logo-option-box hidden border border-amber-200 bg-amber-50 rounded-xl p-4">
+      <p class="text-xs font-semibold text-amber-800 mb-2">✨ ESG 프로그램 추가 옵션</p>
+      <label class="flex items-start gap-3 cursor-pointer">
+        <input type="checkbox" id="logoCheckbox" onchange="toggleLogoOption(this.checked)"
+               class="mt-0.5 w-4 h-4 accent-amber-800 flex-shrink-0" />
+        <div>
+          <p class="text-sm font-medium text-stone-700">(옵션) 기업 로고 전사지 제작</p>
+          <p class="text-xs text-stone-500 mt-0.5">제품에 기업 로고를 인쇄한 전사지를 제작합니다.</p>
+          <p class="text-xs font-semibold text-amber-800 mt-1">+ 100,000원 (1회 제작비)</p>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────
+       STEP 4: 신청자 정보
+  ──────────────────────────────────── -->
+  <div id="step3" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all">
+
+    <label class="block text-sm font-semibold text-stone-700 mb-4">
+      <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">6</span>
+      신청자 정보
+    </label>
+
+    <div class="space-y-3">
+      <div>
+        <label class="block text-xs text-stone-500 mb-1">이름 <span class="text-red-400">*</span></label>
+        <input id="inputName" type="text" placeholder="홍길동"
+               class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700" />
+      </div>
+      <div>
+        <label class="block text-xs text-stone-500 mb-1">연락처 <span class="text-red-400">*</span></label>
+        <input id="inputPhone" type="tel" placeholder="010-0000-0000"
+               class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700"
+               oninput="formatPhone(this)" />
+      </div>
+      <div>
+        <label class="block text-xs text-stone-500 mb-1">이메일 <span class="text-red-400">*</span></label>
+        <input id="inputEmail" type="email" placeholder="example@email.com"
+               class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700" />
+      </div>
+      <div>
+        <label class="block text-xs text-stone-500 mb-1">메모 (선택)</label>
+        <input id="inputMemo" type="text" placeholder="요청사항이 있으면 입력해 주세요"
+               class="w-full border border-stone-200 rounded-xl px-4 py-2.5 text-sm text-stone-700" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────────
+       STEP 5: 예약 요약 & 제출
+  ──────────────────────────────────── -->
+  <div id="step4" class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-4 opacity-50 pointer-events-none transition-all">
+
+    <label class="block text-sm font-semibold text-stone-700 mb-4">
+      <span class="inline-block w-5 h-5 bg-amber-800 text-white text-xs rounded-full text-center leading-5 mr-1">7</span>
+      예약 내용 확인
+    </label>
+
+    <div id="summaryBox" class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-stone-700 space-y-2 mb-5">
+      <!-- JS로 렌더링 -->
+    </div>
+
+    <p class="text-xs text-stone-400 mb-4 leading-relaxed">
+      예약 접수 후 담당자 확인을 통해 <strong>예약이 확정</strong>됩니다.<br />
+      확정 시 이메일로 안내를 드립니다.
+    </p>
+
+    <button id="submitBtn" onclick="submitReservation()"
+            class="w-full bg-amber-800 hover:bg-amber-900 text-white font-semibold py-4 rounded-xl transition text-base flex items-center justify-center gap-2">
+      예약 접수하기
+    </button>
+  </div>
+
+</div><!-- /max-w-lg -->
+
+<!-- 완료 팝업 -->
+<div id="successOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden px-4">
+  <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+    <div class="text-5xl mb-4">🎉</div>
+    <h2 class="text-xl font-bold text-stone-800 mb-2">예약이 접수되었습니다!</h2>
+    <p class="text-sm text-stone-500 mb-1">담당자 확인 후 예약이 확정됩니다.</p>
+    <p class="text-sm text-stone-500 mb-6">확정 시 이메일로 안내드리겠습니다. 😊</p>
+    <button onclick="resetForm()"
+            class="w-full bg-amber-800 text-white font-semibold py-3 rounded-xl hover:bg-amber-900 transition">
+      처음으로 돌아가기
+    </button>
+  </div>
+</div>
+
+<!-- 에러 토스트 -->
+<div id="toast"
+     class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-600 text-white text-sm px-5 py-3 rounded-xl shadow-lg hidden z-50 max-w-xs text-center">
+</div>
 
 <!-- ══════════════════════════════════════
      JavaScript
@@ -309,34 +333,47 @@
 /* ──────────────────────────────────────
    ★ 설정값 — 반드시 본인 환경에 맞게 수정
 ────────────────────────────────────── */
-const GAS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'; // ← GAS 배포 URL로 교체
+const GAS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
 
+/* ── 프로그램 목록 (name, price, hasLogoOption) ── */
 const PROGRAMS = [
-  '코일링',
-  '얼굴접시',
-  '핸드페인팅',
-  '캐릭터접시',
-  '엔틱접시',
-  'ESG 도자기텀블러',
-  'ESG 유아식기세트',
-  '칠보공예',
+  { name: '코일링',                                  price: 30000 },
+  { name: '얼굴접시',                                price: 30000 },
+  { name: '핸드페인팅',                              price: 30000 },
+  { name: '칠보그립톡만들기',                        price: 30000 },
+  { name: '캐릭터접시',                              price: 40000 },
+  { name: '엔틱접시',                                price: 40000 },
+  { name: 'ESG 도자기텀블러 만들기 체험봉사활동',   price: 50000, hasLogoOption: true },
+  { name: 'ESG 유아식기 세트 만들기 체험봉사활동', price: 60000, hasLogoOption: true },
 ];
+
+/* ── 출강 지역별 출장비 ── */
+const TRAVEL_FEES = {
+  '서울 및 경기 서북부': 100000,
+  '경기도 (서북부 제외)': 200000,
+  '충청·강원': 300000,
+  '전라·경상': null, // 실비
+};
 
 /* ──────────────────────────────────────
    상태 변수
 ────────────────────────────────────── */
 let state = {
-  date: '',
-  program: '',
-  time: '',
-  count: 4,
-  name: '',
-  phone: '',
-  email: '',
-  memo: '',
+  date:        '',
+  program:     '',
+  programPrice: 0,
+  hasLogoOption: false,
+  time:        '',
+  visitType:   '',   // '내방' | '출강'
+  region:      '',   // 출강 지역
+  count:       4,
+  logoOption:  false,
+  name:        '',
+  phone:       '',
+  email:       '',
+  memo:        '',
 };
 
-// 예약 마감된 슬롯: { "YYYY-MM-DD": ["오전","오후"] }
 let bookedSlots = {};
 
 /* ──────────────────────────────────────
@@ -352,9 +389,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderPrograms() {
   const grid = document.getElementById('programGrid');
   grid.innerHTML = PROGRAMS.map(p => `
-    <button class="program-btn border-2 border-stone-200 rounded-xl py-2.5 px-3 text-sm text-stone-600 hover:border-amber-800 hover:text-amber-800 text-left"
-            onclick="selectProgram('${p}')">
-      ${p}
+    <button class="sel-btn border-2 border-stone-200 rounded-xl py-2.5 px-4 text-sm text-stone-600
+                   hover:border-amber-800 hover:text-amber-800 flex justify-between items-center"
+            onclick="selectProgram('${p.name}')">
+      <span class="text-left">${p.name}</span>
+      <span class="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200
+                   rounded-full px-2 py-0.5 whitespace-nowrap ml-2">
+        ${p.price.toLocaleString()}원/인
+      </span>
     </button>
   `).join('');
 }
@@ -366,7 +408,7 @@ function initCalendar() {
     minDate: 'today',
     disableMobile: false,
     dateFormat: 'Y-m-d',
-    onChange: (selectedDates, dateStr) => {
+    onChange: (_, dateStr) => {
       state.date = dateStr;
       updateTimeButtons();
       updateProgress();
@@ -378,14 +420,13 @@ function initCalendar() {
 /* ── 마감된 예약 슬롯 불러오기 ── */
 async function fetchBookedSlots() {
   try {
-    const res = await fetch(`${GAS_URL}?action=getBookedSlots`);
+    const res  = await fetch(`${GAS_URL}?action=getBookedSlots`);
     const json = await res.json();
     if (json.status === 'ok') {
       bookedSlots = json.data || {};
       updateTimeButtons();
     }
   } catch (e) {
-    // 네트워크 오류 시 조용히 무시 (시간 버튼은 활성화 상태 유지)
     console.warn('예약 슬롯 로드 실패:', e);
   }
 }
@@ -394,12 +435,28 @@ async function fetchBookedSlots() {
    이벤트 핸들러
 ────────────────────────────────────── */
 function selectProgram(name) {
-  state.program = name;
-  document.querySelectorAll('.program-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent.trim() === name);
+  const prog = PROGRAMS.find(p => p.name === name);
+  state.program      = name;
+  state.programPrice = prog ? prog.price : 0;
+  state.hasLogoOption = !!(prog && prog.hasLogoOption);
+
+  // 비ESG 프로그램으로 바꾸면 로고 옵션 해제
+  if (!state.hasLogoOption) {
+    state.logoOption = false;
+    const cb = document.getElementById('logoCheckbox');
+    if (cb) cb.checked = false;
+  }
+
+  document.querySelectorAll('.sel-btn[onclick^="selectProgram"]').forEach(btn => {
+    btn.classList.toggle('active', btn.querySelector('span').textContent.trim() === name);
   });
+
+  // ESG 로고 옵션 박스 표시 여부
+  document.getElementById('logoOptionBox').classList.toggle('hidden', !state.hasLogoOption);
+
   updateProgress();
   checkStepUnlock();
+  refreshSummaryIfReady();
 }
 
 function selectTime(t) {
@@ -410,11 +467,53 @@ function selectTime(t) {
   checkStepUnlock();
 }
 
+function selectVisitType(type) {
+  state.visitType = type;
+  state.region    = '';
+
+  document.getElementById('btnVisitIn').classList.toggle('active',  type === '내방');
+  document.getElementById('btnVisitOut').classList.toggle('active', type === '출강');
+
+  const regionBox = document.getElementById('regionBox');
+  if (type === '출강') {
+    regionBox.classList.remove('hidden');
+    document.getElementById('regionSelect').value = '';
+    document.getElementById('travelFeeNote').classList.add('hidden');
+  } else {
+    regionBox.classList.add('hidden');
+  }
+
+  checkStepUnlock();
+  refreshSummaryIfReady();
+}
+
+function selectRegion(value) {
+  state.region = value;
+
+  const note = document.getElementById('travelFeeNote');
+  if (value) {
+    const fee = TRAVEL_FEES[value];
+    note.textContent = fee === null
+      ? '📍 출장비: 실비 적용 (담당자 별도 안내)'
+      : `📍 출장비: ${fee.toLocaleString()}원`;
+    note.classList.remove('hidden');
+  } else {
+    note.classList.add('hidden');
+  }
+
+  checkStepUnlock();
+  refreshSummaryIfReady();
+}
+
+function toggleLogoOption(checked) {
+  state.logoOption = checked;
+  refreshSummaryIfReady();
+}
+
 function updateTimeButtons() {
   const booked = state.date ? (bookedSlots[state.date] || []) : [];
-
-  const btnAM = document.getElementById('btnAM');
-  const btnPM = document.getElementById('btnPM');
+  const btnAM  = document.getElementById('btnAM');
+  const btnPM  = document.getElementById('btnPM');
   const notice = document.getElementById('timeNotice');
 
   const amBooked = booked.includes('오전');
@@ -422,11 +521,8 @@ function updateTimeButtons() {
 
   btnAM.disabled = amBooked;
   btnPM.disabled = pmBooked;
+  notice.classList.toggle('hidden', !(amBooked || pmBooked));
 
-  if (amBooked || pmBooked) notice.classList.remove('hidden');
-  else notice.classList.add('hidden');
-
-  // 선택 중인 시간이 마감됐으면 해제
   if ((state.time === '오전' && amBooked) || (state.time === '오후' && pmBooked)) {
     state.time = '';
     btnAM.classList.remove('active');
@@ -439,33 +535,38 @@ function changeCount(delta) {
   if (next < 4 || next > 30) return;
   state.count = next;
   document.getElementById('countDisplay').textContent = next;
-  checkStepUnlock();
+  refreshSummaryIfReady();
 }
 
 /* ──────────────────────────────────────
-   스텝 잠금 해제
+   스텝 잠금 해제 로직
 ────────────────────────────────────── */
 function checkStepUnlock() {
-  const step1Done = state.date && state.program && state.time;
-  const step2 = document.getElementById('step2');
-  const step3 = document.getElementById('step3');
-  const step4 = document.getElementById('step4');
+  const step1Done = !!(state.date && state.program && state.time);
 
-  setStepActive(step2, step1Done);
+  // step1 완료 → 내방/출강 활성화
+  setStepActive(document.getElementById('stepVisit'), step1Done);
 
-  const step2Done = step1Done && state.count >= 1;
-  setStepActive(step3, step2Done);
+  // 내방/출강 완료 조건 (출강이면 지역도 선택해야 함)
+  const visitDone = step1Done && (
+    state.visitType === '내방' ||
+    (state.visitType === '출강' && state.region)
+  );
 
-  // step3 입력값 실시간 감지 → step4 활성화
-  bindStep3Inputs();
+  // 인원 활성화
+  setStepActive(document.getElementById('step2'), visitDone);
+
+  // 신청자 정보 활성화
+  const step2Done = visitDone && state.count >= 4;
+  setStepActive(document.getElementById('step3'), step2Done);
+
+  // step3 입력 감지 → step4 활성화
+  if (step2Done) bindStep3Inputs();
 }
 
 function setStepActive(el, active) {
-  if (active) {
-    el.classList.remove('opacity-50', 'pointer-events-none');
-  } else {
-    el.classList.add('opacity-50', 'pointer-events-none');
-  }
+  el.classList.toggle('opacity-50', !active);
+  el.classList.toggle('pointer-events-none', !active);
 }
 
 function bindStep3Inputs() {
@@ -482,9 +583,33 @@ function onStep3Input() {
   const name  = document.getElementById('inputName').value.trim();
   const phone = document.getElementById('inputPhone').value.trim();
   const email = document.getElementById('inputEmail').value.trim();
-  const ready = name && phone && email;
+  const ready = !!(name && phone && email);
+
   setStepActive(document.getElementById('step4'), ready);
   if (ready) updateSummary(name, phone, email);
+}
+
+function refreshSummaryIfReady() {
+  const name  = document.getElementById('inputName').value.trim();
+  const phone = document.getElementById('inputPhone').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
+  if (name && phone && email) updateSummary(name, phone, email);
+}
+
+/* ──────────────────────────────────────
+   금액 계산
+────────────────────────────────────── */
+function calcPrices() {
+  const programTotal = state.programPrice * state.count;
+  const travelFee    = (state.visitType === '출강' && state.region)
+                         ? TRAVEL_FEES[state.region]
+                         : 0;
+  const logoFee      = state.logoOption ? 100000 : 0;
+  const isRealCost   = travelFee === null;
+
+  const total = programTotal + (isRealCost ? 0 : (travelFee || 0)) + logoFee;
+
+  return { programTotal, travelFee, isRealCost, logoFee, total };
 }
 
 /* ──────────────────────────────────────
@@ -492,17 +617,52 @@ function onStep3Input() {
 ────────────────────────────────────── */
 function updateSummary(name, phone, email) {
   const memo = document.getElementById('inputMemo').value.trim();
-  const box = document.getElementById('summaryBox');
-  box.innerHTML = `
+  const { programTotal, travelFee, isRealCost, logoFee, total } = calcPrices();
+  const timeLabel = state.time === '오전' ? '오전 10:00~12:00' : '오후 14:00~16:00';
+
+  const travelRow = state.visitType === '출강' && state.region
+    ? `<div class="flex justify-between">
+         <span class="text-stone-400">출장비 (${state.region})</span>
+         <span class="font-medium">${isRealCost ? '실비 (별도 문의)' : travelFee.toLocaleString() + '원'}</span>
+       </div>`
+    : '';
+
+  const logoRow = state.logoOption
+    ? `<div class="flex justify-between">
+         <span class="text-stone-400">기업로고 전사지 제작</span>
+         <span class="font-medium">100,000원</span>
+       </div>`
+    : '';
+
+  const totalRow = isRealCost
+    ? `<div class="total-row flex justify-between font-bold text-amber-800">
+         <span>견적 합계</span>
+         <span>${total.toLocaleString()}원 + 출장비(실비)</span>
+       </div>`
+    : `<div class="total-row flex justify-between font-bold text-amber-800">
+         <span>견적 합계</span>
+         <span>${total.toLocaleString()}원</span>
+       </div>`;
+
+  document.getElementById('summaryBox').innerHTML = `
     <div class="flex justify-between"><span class="text-stone-400">날짜</span><span class="font-medium">${formatDateKo(state.date)}</span></div>
     <div class="flex justify-between"><span class="text-stone-400">프로그램</span><span class="font-medium">${state.program}</span></div>
-    <div class="flex justify-between"><span class="text-stone-400">시간</span><span class="font-medium">${state.time === '오전' ? '오전 10:00~12:00' : '오후 14:00~16:00'}</span></div>
+    <div class="flex justify-between"><span class="text-stone-400">시간</span><span class="font-medium">${timeLabel}</span></div>
+    <div class="flex justify-between"><span class="text-stone-400">방문 유형</span><span class="font-medium">${state.visitType}</span></div>
     <div class="flex justify-between"><span class="text-stone-400">인원</span><span class="font-medium">${state.count}명</span></div>
-    <div class="border-t border-amber-200 pt-2 mt-2"></div>
+    <div class="border-t border-amber-200 pt-2 mt-1"></div>
     <div class="flex justify-between"><span class="text-stone-400">신청자</span><span class="font-medium">${name}</span></div>
     <div class="flex justify-between"><span class="text-stone-400">연락처</span><span class="font-medium">${phone}</span></div>
     <div class="flex justify-between"><span class="text-stone-400">이메일</span><span class="font-medium">${email}</span></div>
     ${memo ? `<div class="flex justify-between"><span class="text-stone-400">메모</span><span class="font-medium">${memo}</span></div>` : ''}
+    <div class="border-t border-amber-200 pt-2 mt-1 text-xs text-stone-500 font-semibold">금액 내역</div>
+    <div class="flex justify-between">
+      <span class="text-stone-400">체험비 (${state.programPrice.toLocaleString()}원 × ${state.count}명)</span>
+      <span class="font-medium">${programTotal.toLocaleString()}원</span>
+    </div>
+    ${travelRow}
+    ${logoRow}
+    ${totalRow}
   `;
 }
 
@@ -510,16 +670,13 @@ function updateSummary(name, phone, email) {
    스텝 도트 업데이트
 ────────────────────────────────────── */
 function updateProgress() {
-  const dots = [
-    document.getElementById('dot1'),
-    document.getElementById('dot2'),
-    document.getElementById('dot3'),
-    document.getElementById('dot4'),
-  ];
-  dots[0].classList.add('done');
-  dots[1].classList.toggle('done', !!(state.date && state.program && state.time));
-  dots[2].classList.toggle('done', !!(state.date && state.program && state.time));
-  dots[3].classList.toggle('done', false);
+  const s1 = !!(state.date && state.program && state.time);
+  const s2 = s1 && !!(state.visitType && (state.visitType === '내방' || state.region));
+  document.getElementById('dot1').classList.add('done');
+  document.getElementById('dot2').classList.toggle('done', s1);
+  document.getElementById('dot3').classList.toggle('done', s2);
+  document.getElementById('dot4').classList.toggle('done', false);
+  document.getElementById('dot5').classList.toggle('done', false);
 }
 
 /* ──────────────────────────────────────
@@ -531,30 +688,39 @@ async function submitReservation() {
   const email = document.getElementById('inputEmail').value.trim();
   const memo  = document.getElementById('inputMemo').value.trim();
 
-  // 유효성 검사
-  if (!state.date || !state.program || !state.time) {
+  if (!state.date || !state.program || !state.time)
     return showToast('날짜, 프로그램, 시간을 모두 선택해 주세요.');
-  }
-  if (!name || !phone || !email) {
+  if (!state.visitType)
+    return showToast('내방 또는 출강을 선택해 주세요.');
+  if (state.visitType === '출강' && !state.region)
+    return showToast('출강 지역을 선택해 주세요.');
+  if (!name || !phone || !email)
     return showToast('이름, 연락처, 이메일을 모두 입력해 주세요.');
-  }
-  if (!isValidEmail(email)) {
+  if (!isValidEmail(email))
     return showToast('올바른 이메일 주소를 입력해 주세요.');
-  }
-  if (!isValidPhone(phone)) {
+  if (!isValidPhone(phone))
     return showToast('올바른 연락처를 입력해 주세요. (예: 010-1234-5678)');
-  }
+
+  const { programTotal, travelFee, isRealCost, logoFee, total } = calcPrices();
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> 접수 중...';
 
   const payload = {
-    action: 'reserve',
-    date: state.date,
-    program: state.program,
-    time: state.time,
-    count: state.count,
+    action:        'reserve',
+    date:          state.date,
+    program:       state.program,
+    time:          state.time,
+    visitType:     state.visitType,
+    region:        state.region || '',
+    count:         state.count,
+    logoOption:    state.logoOption,
+    programPrice:  state.programPrice,
+    programTotal,
+    travelFee:     isRealCost ? '실비' : (travelFee || 0),
+    logoFee,
+    estimateTotal: isRealCost ? `${total.toLocaleString()}원 + 출장비(실비)` : `${total.toLocaleString()}원`,
     name,
     phone,
     email,
@@ -563,10 +729,10 @@ async function submitReservation() {
   };
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' }, // GAS CORS 우회
-      body: JSON.stringify(payload),
+    const res  = await fetch(GAS_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(payload),
     });
     const json = await res.json();
 
@@ -588,20 +754,27 @@ async function submitReservation() {
    폼 초기화
 ────────────────────────────────────── */
 function resetForm() {
-  state = { date: '', program: '', time: '', count: 4, name: '', phone: '', email: '', memo: '' };
+  state = {
+    date: '', program: '', programPrice: 0, hasLogoOption: false,
+    time: '', visitType: '', region: '', count: 4,
+    logoOption: false, name: '', phone: '', email: '', memo: '',
+  };
 
   document.getElementById('datePicker')._flatpickr.clear();
-  document.querySelectorAll('.program-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('btnAM').classList.remove('active');
-  document.getElementById('btnPM').classList.remove('active');
-  document.getElementById('countDisplay').textContent = '1';
+  document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('countDisplay').textContent = '4';
+  document.getElementById('logoOptionBox').classList.add('hidden');
+  document.getElementById('logoCheckbox').checked = false;
+  document.getElementById('regionBox').classList.add('hidden');
+  document.getElementById('regionSelect').value = '';
+  document.getElementById('travelFeeNote').classList.add('hidden');
   ['inputName', 'inputPhone', 'inputEmail', 'inputMemo'].forEach(id => {
     document.getElementById(id).value = '';
   });
 
-  setStepActive(document.getElementById('step2'), false);
-  setStepActive(document.getElementById('step3'), false);
-  setStepActive(document.getElementById('step4'), false);
+  ['stepVisit', 'step2', 'step3', 'step4'].forEach(id => {
+    setStepActive(document.getElementById(id), false);
+  });
 
   document.getElementById('successOverlay').classList.add('hidden');
   updateProgress();
@@ -619,19 +792,14 @@ function formatPhone(input) {
   else input.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function isValidPhone(phone) {
-  return /^01[0-9]-\d{3,4}-\d{4}$/.test(phone);
-}
+function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+function isValidPhone(phone)  { return /^01[0-9]-\d{3,4}-\d{4}$/.test(phone); }
 
 function formatDateKo(dateStr) {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-');
   const days = ['일','월','화','수','목','금','토'];
-  const day = days[new Date(dateStr).getDay()];
+  const day  = days[new Date(dateStr).getDay()];
   return `${y}년 ${parseInt(m)}월 ${parseInt(d)}일 (${day})`;
 }
 

@@ -113,19 +113,28 @@ function createEstimatePdf(info) {
   const timeLabel   = info.time === '오전' ? '오전 10:00~12:00' : '오후 14:00~16:00';
 
   // ── ④ 플레이스홀더 치환
+  const travelFeeStr = (info.travelFee === '실비' || info.travelFee === null)
+    ? '실비 (담당자 별도 안내)'
+    : `${Number(info.travelFee || 0).toLocaleString()}원`;
+
   const replacements = {
-    '{{접수번호}}':  String(info.rowId),
-    '{{신청자명}}':  info.name,
-    '{{연락처}}':    info.phone,
-    '{{이메일}}':    info.email,
-    '{{체험날짜}}':  info.date,
-    '{{시간대}}':    timeLabel,
-    '{{프로그램}}':  info.program,
-    '{{인원수}}':    `${info.count}명`,
-    '{{단가}}':      `${unitPrice.toLocaleString()}원`,
-    '{{견적금액}}':  `${totalAmount.toLocaleString()}원`,
-    '{{비고}}':      info.memo || '',
-    '{{발행일}}':    formatDate(new Date()),
+    '{{접수번호}}':      String(info.rowId),
+    '{{신청자명}}':      info.name,
+    '{{연락처}}':        info.phone,
+    '{{이메일}}':        info.email,
+    '{{체험날짜}}':      info.date,
+    '{{시간대}}':        timeLabel,
+    '{{방문유형}}':      info.visitType || '내방',
+    '{{출강지역}}':      info.region || '-',
+    '{{프로그램}}':      info.program,
+    '{{인원수}}':        `${info.count}명`,
+    '{{단가}}':          `${unitPrice.toLocaleString()}원`,
+    '{{체험비합계}}':    `${totalAmount.toLocaleString()}원`,
+    '{{출장비}}':        travelFeeStr,
+    '{{로고전사지비용}}': Number(info.logoFee || 0) > 0 ? `${Number(info.logoFee).toLocaleString()}원` : '-',
+    '{{견적합계}}':      String(info.estimateTotal || `${totalAmount.toLocaleString()}원`),
+    '{{비고}}':          info.memo || '',
+    '{{발행일}}':        formatDate(new Date()),
   };
 
   replaceAllInSheet(sheet, replacements);
@@ -196,20 +205,20 @@ function convertSheetToPdf(fileId, sheetId) {
 
 /**
  * 프로그램별 1인당 단가 반환
- * → 실제 단가는 이 함수에서 수정하거나 '설정' 시트에서 가져오세요.
+ * → 프론트엔드 payload에 programPrice가 전달되므로 이 함수는 fallback용입니다.
  */
 function getUnitPrice(program) {
   const prices = {
-    '코일링':           30000,
-    '얼굴접시':         35000,
-    '핸드페인팅':       25000,
-    '캐릭터접시':       35000,
-    '엔틱접시':         40000,
-    'ESG 도자기텀블러': 45000,
-    'ESG 유아식기세트': 55000,
-    '칠보공예':         35000,
+    '코일링':                                  30000,
+    '얼굴접시':                                30000,
+    '핸드페인팅':                              30000,
+    '칠보그립톡만들기':                        30000,
+    '캐릭터접시':                              40000,
+    '엔틱접시':                                40000,
+    'ESG 도자기텀블러 만들기 체험봉사활동':   50000,
+    'ESG 유아식기 세트 만들기 체험봉사활동': 60000,
   };
-  return prices[program] || 30000; // 미등록 프로그램은 기본 3만원
+  return prices[program] || 30000;
 }
 
 /* ══════════════════════════════════════════════════════════════════
